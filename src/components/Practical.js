@@ -1,84 +1,71 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 import PracticalList from './PracticalComponents/PracticalList';
 import uniqid from 'uniqid';
 import PracticalEdit from "./PracticalComponents/PracticalEdit";
 
-class Practical extends Component {
-  constructor(props) {
-    super(props);
+const Practical = () => {
+  const [stateList, setStateList] = useState([]);
+  const [add, setAdd] = useState(false);
 
-    this.state = {
-      list: [
-      ],
-      add: false,
-    }
-
-    this.toggleEdit = this.toggleEdit.bind(this);
-    this.toggleEditCard = this.toggleEditCard.bind(this);
-    this.deleteCard = this.deleteCard.bind(this);
-  }
-
-  deleteCard(ev) {
+  const deleteCard = ev => {
     const eventKey = ev.target.parentNode.getAttribute('data-key');
-    this.setState(state => {
-      const list = [...state.list];
-      let index = 0;
-      list.forEach((element, i) => {
-        if(element.id === eventKey){
-          index = i;
-        }
-      });
-      list.splice(index, 1);
-      return {list: list, add: false};
-    })
+    const list = [...stateList];
+    let index = 0;
+
+    list.forEach((element, i) => {
+      if(element.id === eventKey){
+        index = i;
+      }
+    });
+
+    list.splice(index, 1);
+    setStateList(list);
+    setAdd(false); 
   }
 
-  toggleEdit(ev) {
+  const toggleEdit = ev => {
     ev.preventDefault();
     if (ev.target.value === "Submit") {
       const siblings = ev.target.parentNode.querySelectorAll("input");
       const textArea = ev.target.parentNode.querySelector('textarea');
       if (siblings[2].validity.valid && siblings[3].validity.valid) {
-        this.setState((state) => {
-          const tempArr = [...state.list];
-          tempArr.push({
-            id: uniqid(),
-            companyName: siblings[0].value,
-            jobTitle: siblings[1].value,
-            startDate: siblings[2].valueAsDate,
-            endDate: siblings[3].valueAsDate,
-            tasks: parseTaskInput(textArea.value),
-            edit: false,
-          });
-          return { list: tempArr, add: false };
+        const tempArr = [...stateList];
+        tempArr.push({
+          id: uniqid(),
+          companyName: siblings[0].value,
+          jobTitle: siblings[1].value,
+          startDate: siblings[2].valueAsDate,
+          endDate: siblings[3].valueAsDate,
+          tasks: parseTaskInput(textArea.value),
+          edit: false,
         });
+        setStateList(tempArr);
+        setAdd(false);
       }
     } else {
-      this.setState({ add: true });
+      setAdd(true);
     }
   }
 
-  toggleEditCard(ev) {
+  const toggleEditCard = ev => {
     ev.preventDefault();
     if(ev.target.value !== 'Submit'){
       const eventKey = ev.target.parentNode.getAttribute('data-key');
-      this.setState(state => {
-        const tempArr = [...state.list];
+        const tempArr = [...stateList];
         tempArr.forEach(element => {
           if(element.id === eventKey){
             element.edit = true;
           }
         });
-        return {list: tempArr, add: false};
-      });
-    }
+        setStateList(tempArr);
+        setAdd(false)
+      }
     else {
-      this.setState(state => {
         const eventKey = ev.target.parentNode.parentNode.getAttribute('data-key');
         const inputs = ev.target.parentNode.querySelectorAll('input');
         const textArea = ev.target.parentNode.querySelector('textarea');
         if(inputs[2].validity.valid && inputs[3].validity.valid){
-          const tempArr = [...state.list];
+          const tempArr = [...stateList];
           tempArr.forEach(element => {
             if(element.id === eventKey){
               element.companyName = inputs[0].value;
@@ -89,19 +76,13 @@ class Practical extends Component {
               element.edit = false;
             }
           });
-          return {list: tempArr, add: false};
+          setStateList(tempArr);
+          setAdd(false);
         }
-        
-      });
     }
-    
   }
 
-  render() {
-    console.log(this.state);
-    return renderFunc(this.state, this.toggleEdit, this.toggleEditCard, this.deleteCard);
-  }
-  
+  return renderFunc({list: stateList, add}, toggleEdit, toggleEditCard, deleteCard);
 }
 
 const renderFunc = (state, toggleEdit, toggleEditCard, deleteCard) => {

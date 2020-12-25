@@ -1,16 +1,14 @@
-import React, { Component } from "react";
+import React from "react";
 import { format, formatDistance } from "date-fns";
 import PracticalListEdit from './PracticalListEdit';
 import uniqid from 'uniqid';
 
-class PracticalList extends Component {
-  render() {
-    return renderFunc(
-      this.props.state,
-      this.props.toggleEditCard,
-      this.props.deleteCard,
-    );
-  }
+const PracticalList = props => {
+  return renderFunc(
+    props.state,
+    props.toggleEditCard,
+    props.deleteCard,
+  );
 }
 
 const renderFunc = (state, toggleEditCard, deleteCard) => {

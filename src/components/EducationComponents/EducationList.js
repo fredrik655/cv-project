@@ -1,15 +1,14 @@
-import React, { Component } from "react";
+import React from "react";
 import { format } from "date-fns";
 import EducationListEdit from "./EducationListEdit";
 
-class EducationList extends Component {
-  render() {
-    return renderFunc(
-      this.props.state,
-      this.props.toggleEditCard,
-      this.props.deleteCard,
-    );
-  }
+
+const EducationList = props => {
+  return renderFunc(
+    props.state,
+    props.toggleEditCard,
+    props.deleteCard,
+  );
 }
 
 const renderFunc = (state, toggleEditCard, deleteCard) => {
